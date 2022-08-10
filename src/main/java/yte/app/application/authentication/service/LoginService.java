@@ -1,0 +1,76 @@
+package yte.app.application.authentication.service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import yte.app.application.authentication.controller.request.LoginRequest;
+import yte.app.application.authentication.entity.Users;
+import yte.app.application.authentication.repository.UserRepository;
+import yte.app.application.common.response.MessageResponse;
+import yte.app.application.common.response.ResponseType;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class LoginService {
+
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+    public MessageResponse login(LoginRequest loginRequest) {
+        var preAuthentication = new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
+        try {
+            Authentication postAuthentication = authenticationManager.authenticate(preAuthentication);
+            SecurityContext newContext = SecurityContextHolder.createEmptyContext();
+            newContext.setAuthentication(postAuthentication);
+            SecurityContextHolder.setContext(newContext);
+
+            return new MessageResponse(ResponseType.SUCCESS, "Login is successful");
+        } catch (AuthenticationException e) {
+            return new MessageResponse(ResponseType.ERROR, "Authentication exception: %s".formatted(e.getMessage()));
+        }
+    }
+
+    public MessageResponse addUsers(Users user) {
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(user);
+
+        return new MessageResponse(ResponseType.SUCCESS, "User has been added successfully");
+    }
+
+    public List<Users> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Users getById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    public MessageResponse deleteUserById(Long id) {
+        userRepository.deleteById(id);
+
+        return new MessageResponse(ResponseType.SUCCESS, "User has been deleted successfully");
+    }
+
+    public MessageResponse updateUser(Long id, Users updatedUser) {
+        Users user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        user.update(updatedUser);
+
+        userRepository.save(user);
+
+        return new MessageResponse(ResponseType.SUCCESS, "User has been updated successfully");
+    }
+}
