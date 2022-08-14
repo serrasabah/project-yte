@@ -22,6 +22,8 @@ public class Job extends BaseEntity {
     private String URL;
     private Long period;
     private Long timeout;
+    private Long healthy = 0L;
+    private Long unhealthy = 0L;
 
     public Job(String jobName, String URL, Long period, Long timeout) {
         this.jobName = jobName;

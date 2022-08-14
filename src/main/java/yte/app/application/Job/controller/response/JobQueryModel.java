@@ -7,7 +7,9 @@ public record JobQueryModel(
          String jobName,
          String URL,
          Long period,
-         Long timeout
+         Long timeout,
+         Long healthy,
+         Long unhealthy
 ) {
     public JobQueryModel(Job job) {
         this(
@@ -15,7 +17,9 @@ public record JobQueryModel(
                 job.getJobName(),
                 job.getURL(),
                 job.getPeriod(),
-                job.getTimeout()
+                job.getTimeout(),
+                job.getHealthy(),
+                job.getUnhealthy()
         );
     }
 }

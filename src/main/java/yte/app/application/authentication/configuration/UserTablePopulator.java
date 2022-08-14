@@ -22,11 +22,13 @@ public class UserTablePopulator {
     @PostConstruct
     public void populateDatabase() {
         if (!userRepository.existsByUsername("user")) {
-            Users user = new Users("user", passwordEncoder.encode("user"), List.of(new Authority("USER")));
+            Users user = new Users("user", passwordEncoder.encode("user"));
+            user.getAuthorities().add(new Authority("USER"));
             userRepository.save(user);
         }
         if (!userRepository.existsByUsername("admin")) {
-            Users user = new Users("admin", passwordEncoder.encode("admin"), List.of(new Authority("ADMIN")));
+            Users user = new Users("admin", passwordEncoder.encode("admin"));
+            user.getAuthorities().add(new Authority("ADMIN"));
             userRepository.save(user);
         }
     }
