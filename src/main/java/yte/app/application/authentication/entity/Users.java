@@ -20,14 +20,7 @@ public class Users extends BaseEntity implements UserDetails {
 
     private String username;
     private String password;
-
     private String role;
-
-    public Users(String username, String password, String role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -41,16 +34,22 @@ public class Users extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobs = new ArrayList<>();
 
-    //  @OneToMany(mappedBy = "users")
-    // private List<Job> jobs = new ArrayList<>();
+    public Users(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
+    public Users(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 
     public <E> Users(String username, String password, List<E> authority) {
         super();
         this.username = username;
         this.password = password;
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

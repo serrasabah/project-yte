@@ -3,6 +3,7 @@ package yte.app.application.Job.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yte.app.application.Job.Entity.Job;
 import yte.app.application.authentication.entity.Users;
 import yte.app.application.authentication.repository.UserRepository;
@@ -35,6 +36,7 @@ public class JobService {
         return new MessageResponse(ResponseType.SUCCESS, "Job has been added successfully");
     }
 
+    @Transactional(readOnly = true)
     public List<Job> getAllJob(){
 
         return jobRepository.findAll();
