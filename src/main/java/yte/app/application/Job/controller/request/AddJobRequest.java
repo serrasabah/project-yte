@@ -6,7 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public record AddJobRequest(
-        @NotBlank
+
+
+        @NotBlank (message = " field cannot be empty")
         @Size(max = 25)
          String jobName,
         @NotBlank

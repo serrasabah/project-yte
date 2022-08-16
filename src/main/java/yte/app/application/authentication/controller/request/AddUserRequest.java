@@ -1,6 +1,6 @@
 package yte.app.application.authentication.controller.request;
 
-import yte.app.application.authentication.entity.Users;
+import yte.app.application.authentication.entity.User;
 
 import javax.validation.constraints.NotBlank;
 
@@ -10,14 +10,13 @@ public record AddUserRequest(
         @NotBlank
         String password,
 
-        @NotBlank
         String role
 
 
 ) {
-    public Users toDomainEntity() {
+    public User toDomainEntity() {
 
-        return new Users(username,  password, role);
+        return new User(username,  password, role);
     }
 
 }

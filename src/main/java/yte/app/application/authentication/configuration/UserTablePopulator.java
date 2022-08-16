@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import yte.app.application.authentication.repository.UserRepository;
 import yte.app.application.authentication.entity.Authority;
-import yte.app.application.authentication.entity.Users;
+import yte.app.application.authentication.entity.User;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -21,12 +21,15 @@ public class UserTablePopulator {
 
     @PostConstruct
     public void populateDatabase() {
+
         if (!userRepository.existsByUsername("user")) {
-            Users user = new Users("user", passwordEncoder.encode("user"), List.of(new Authority("USER")));
+            User user = new User("user", passwordEncoder.encode("user"), "USER");
+            user.getAuthorities().add(new Authority(user.getRole()));
             userRepository.save(user);
         }
         if (!userRepository.existsByUsername("admin")) {
-            Users user = new Users("admin", passwordEncoder.encode("admin"), List.of(new Authority("ADMIN")));
+            User user = new User("admin", passwordEncoder.encode("admin"), "ADMIN");
+            user.getAuthorities().add(new Authority(user.getRole()));
             userRepository.save(user);
         }
     }

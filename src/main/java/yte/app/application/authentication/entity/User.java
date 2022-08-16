@@ -12,22 +12,17 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Users extends BaseEntity implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     private String username;
     private String password;
-
     private String role;
 
-    public Users(String username, String password, String role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
+
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -40,12 +35,17 @@ public class Users extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobs = new ArrayList<>();
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
-    //  @OneToMany(mappedBy = "users")
-    // private List<Job> jobs = new ArrayList<>();
-
-
-    public <E> Users(String username, String password, List<E> authority) {
+    public User(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+    public <E> User(String username, String password, List<Authority> authority) {
         super();
         this.username = username;
         this.password = password;
@@ -72,7 +72,7 @@ public class Users extends BaseEntity implements UserDetails {
         return true;
     }
 
-    public void update(Users updatedStudent) {
+    public void update(User updatedStudent) {
         this.username = updatedStudent.username;
         this.password = updatedStudent.password;
     }
@@ -81,4 +81,10 @@ public class Users extends BaseEntity implements UserDetails {
         this.jobs.add(job);
         job.setUser(this);
     }
+
+    /*
+    public static void main(String[] args) {
+        InetAddress.getByName("").isReachable(2000)
+    }
+*/
 }

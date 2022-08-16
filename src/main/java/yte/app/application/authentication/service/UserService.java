@@ -3,7 +3,9 @@ package yte.app.application.authentication.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import yte.app.application.authentication.entity.Users;
+import org.springframework.transaction.annotation.Transactional;
+import yte.app.application.authentication.entity.Authority;
+import yte.app.application.authentication.entity.User;
 import yte.app.application.authentication.repository.UserRepository;
 import yte.app.application.common.response.MessageResponse;
 import yte.app.application.common.response.ResponseType;
@@ -18,33 +20,43 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MessageResponse addUsers(Users user) {
+    public MessageResponse addUsers(User user) {
 
+        if(userRepository.existsByUsername(user.getUsername())){
+            return new MessageResponse(ResponseType.WARNING, "Username already exists");
+
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
        // user.getAuthorities().add()
 
+        user.getAuthorities().add(new Authority(user.getRole()));
         userRepository.save(user);
 
         return new MessageResponse(ResponseType.SUCCESS, "User has been added successfully");
     }
 
-    public List<Users> getAllUsers() {
+    @Transactional(readOnly = true)
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Users getById(Long id) {
+    public User getById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     public MessageResponse deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        String name = userRepository.findById(id).orElseThrow().getUsername();
+        System.out.println(name);
+        if ((name.equals("admin"))) {
+            return new MessageResponse(ResponseType.ERROR, "user could not be deleted");
 
+        }
+        userRepository.deleteById(id);
         return new MessageResponse(ResponseType.SUCCESS, "User has been deleted successfully");
     }
-
-    public MessageResponse updateUser(Long id, Users updatedUser) {
-        Users user = userRepository.findById(id)
+    public MessageResponse updateUser(Long id, User updatedUser) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         user.update(updatedUser);

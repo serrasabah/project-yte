@@ -4,13 +4,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import yte.app.application.authentication.entity.Users;
+import yte.app.application.authentication.entity.User;
 import yte.app.application.common.entity.BaseEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,7 +21,8 @@ public class Job extends BaseEntity {
     private String URL;
     private Long period;
     private Long timeout;
-
+    private Long healthy = 0L;
+    private Long unhealthy = 0L;
     public Job(String jobName, String URL, Long period, Long timeout) {
         this.jobName = jobName;
         this.URL = URL;
@@ -30,15 +30,14 @@ public class Job extends BaseEntity {
         this.timeout = timeout;
     }
 
-   /* @ManyToOne
-    @JoinColumn(name = "job_id")
-    private Set<Admin> users = new HashSet<>();
-
-  */
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "user_id")
-   private Users user;
+   private User user;
 
+
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+    private List<JobStatus> jobStatus = new ArrayList<>();
 
     public void update(Job updatedStudent) {
         this.jobName = updatedStudent.jobName;
@@ -46,7 +45,11 @@ public class Job extends BaseEntity {
         this.timeout = updatedStudent.timeout;
     }
 
-    public void setUser(Users user) {
+    public void setUser(User user) {
         this.user = user;
     }
+
+
+
+
 }

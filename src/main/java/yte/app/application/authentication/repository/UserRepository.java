@@ -1,13 +1,13 @@
 package yte.app.application.authentication.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import yte.app.application.authentication.entity.Users;
+import yte.app.application.authentication.entity.User;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<Users, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<Users> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
     boolean existsByUsername(String username);
 }
