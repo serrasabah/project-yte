@@ -19,10 +19,12 @@ public interface JobStatusRepository extends JpaRepository<JobStatus, Long> {
   // Optional<JobStatus> findCreatedDate(Long id);
 
     @Query(value = "SELECT s.createdDate FROM JobStatus s where s.id = :id")
-    LocalDateTime retrieveJobStatusByCreatedDate(Long id);
+    LocalDateTime getDate(Long id);
     @Query(value = "SELECT s.id FROM JobStatus s inner join s.job p where p.id = :id")
         List<Long> retrieveJobStatusByJobId(Long id);
 
+
+    //burası hata veriyor
     @Query(value = "SELECT count(s.reachable) FROM JobStatus s where s.reachable = true and (s.createdDate BETWEEN s.createdDate= :startDate AND s.createdDate = :endDate) " )
             long  findHealthBetween(LocalDateTime startDate, LocalDateTime endDate);
 }

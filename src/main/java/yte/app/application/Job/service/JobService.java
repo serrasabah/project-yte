@@ -98,9 +98,10 @@ public class JobService {
        List<Long> status = jobStatusRepository.retrieveJobStatusByJobId(id);
         long statusFirst = status.get(0);
         System.out.println("statusFirst"+statusFirst);
-        LocalDateTime start = jobStatusRepository.retrieveJobStatusByCreatedDate(statusFirst);
+        LocalDateTime start = jobStatusRepository.getDate(statusFirst);
         LocalDateTime end = LocalDateTime.of(start.getYear(), start.getMonth(), start.getDayOfMonth(),start.getHour(),start.getMinute() + 1, start.getSecond());
         System.out.println("end date" + end);
+        //hata
         job.setHealthy(jobStatusRepository.findHealthBetween(start,end));
         System.out.println(job.getHealthy());
       // System.out.println(jobStatusRepository.findCreatedDateBetween());
