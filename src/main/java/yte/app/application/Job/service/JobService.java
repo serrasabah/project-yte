@@ -91,20 +91,28 @@ public class JobService {
         return  new MessageResponse(ResponseType.SUCCESS, "Job has been deleted successfully");
     }
 
-    public Job getById(Long id) {
+    public Job getByIdRepresentMınutes(Long id) {
         Job job = jobRepository.findById(id).orElseThrow();
         //job.setHealthy(jobStatusRepository.countByReachable(true));
         job.setUnhealthy(jobStatusRepository.countByReachable(false));
-       List<Long> status = jobStatusRepository.retrieveJobStatusByJobId(id);
+        List<Long> status = jobStatusRepository.retrieveJobStatusByJobId(id, Sort.by("id").ascending());
         long statusFirst = status.get(0);
         System.out.println("statusFirst"+statusFirst);
         LocalDateTime start = jobStatusRepository.getDate(statusFirst);
-        LocalDateTime end = LocalDateTime.of(start.getYear(), start.getMonth(), start.getDayOfMonth(),start.getHour(),start.getMinute() + 1, start.getSecond());
-        System.out.println("end date" + end);
-        //hata
-        job.setHealthy(jobStatusRepository.findHealthBetween(start,end));
-        System.out.println(job.getHealthy());
-      // System.out.println(jobStatusRepository.findCreatedDateBetween());
+        LocalDateTime end = LocalDateTime.of(start.getYear(), start.getMonth(), start.getDayOfMonth(),start.getHour(),start.getMinute() + 2, start.getSecond(), start.getNano());
+      //  System.out.println(jobStatusRepository.countByAuthorQuery(id, start, end));
+        job.setHealthy(jobStatusRepository.countByHealthy(id, start, end));
+        job.setUnhealthy(jobStatusRepository.countByUnHealthy(id,start,end));
+        return jobRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Job not found"));
+    }
+
+    public Job getByIdAll(Long id) {
+        Job job = jobRepository.findById(id).orElseThrow();
+        //job.setHealthy(jobStatusRepository.countByReachable(true));
+        job.setUnhealthy(jobStatusRepository.countByAllUnHealthy(id));
+        job.setHealthy(jobStatusRepository.countByAllHealthy(id));
+
         return jobRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Job not found"));
     }

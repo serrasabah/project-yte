@@ -34,11 +34,16 @@ public class JobController {
     }
 
 
-    @GetMapping("/{id}")
-    public JobQueryModel getById(@NotNull @PathVariable Long id) {
-
-        return new JobQueryModel(jobService.getById(id));
+    @GetMapping("/minute/{id}")
+    public JobQueryModel getByIdRepresentMınutes(@NotNull @PathVariable Long id) {
+        return new JobQueryModel(jobService.getByIdRepresentMınutes(id));
     }
+
+    @GetMapping("/all/{id}")
+    public JobQueryModel getByIdAll(@NotNull @PathVariable Long id) {
+        return new JobQueryModel(jobService.getByIdAll(id));
+    }
+
     @GetMapping("/name")
     public List<JobQueryModel> getAllJobByUser() {
         return jobService.getAllJobByUser()

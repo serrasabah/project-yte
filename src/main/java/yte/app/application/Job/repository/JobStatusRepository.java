@@ -21,10 +21,18 @@ public interface JobStatusRepository extends JpaRepository<JobStatus, Long> {
     @Query(value = "SELECT s.createdDate FROM JobStatus s where s.id = :id")
     LocalDateTime getDate(Long id);
     @Query(value = "SELECT s.id FROM JobStatus s inner join s.job p where p.id = :id")
-        List<Long> retrieveJobStatusByJobId(Long id);
+        List<Long> retrieveJobStatusByJobId(Long id, Sort sort);
 
+    @Query(value = "SELECT count(s.reachable) FROM JobStatus s where s.job.id = :id and s.reachable = true and s.createdDate BETWEEN :startDate and :endDate" )
+    long countByHealthy(Long id, @Param("startDate") LocalDateTime startDate,@Param("endDate") LocalDateTime endDate);
 
-    //burası hata veriyor
-    @Query(value = "SELECT count(s.reachable) FROM JobStatus s where s.reachable = true and (s.createdDate BETWEEN s.createdDate= :startDate AND s.createdDate = :endDate) " )
-            long  findHealthBetween(LocalDateTime startDate, LocalDateTime endDate);
+    @Query(value = "SELECT count(s.reachable) FROM JobStatus s where s.job.id = :id and s.reachable = false and s.createdDate BETWEEN :startDate and :endDate" )
+    long countByUnHealthy(Long id, @Param("startDate") LocalDateTime startDate,@Param("endDate") LocalDateTime endDate);
+
+    @Query(value = "SELECT count(s.reachable) FROM JobStatus s where s.job.id = :id and s.reachable = false" )
+    long countByAllUnHealthy(Long id);
+
+    @Query(value = "SELECT count(s.reachable) FROM JobStatus s where s.job.id = :id and s.reachable = true" )
+    long countByAllHealthy(Long id);
+
 }
