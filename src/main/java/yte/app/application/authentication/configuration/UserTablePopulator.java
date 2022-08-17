@@ -9,7 +9,6 @@ import yte.app.application.authentication.entity.User;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class UserTablePopulator {
@@ -17,11 +16,8 @@ public class UserTablePopulator {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-
-
     @PostConstruct
     public void populateDatabase() {
-
         if (!userRepository.existsByUsername("user")) {
             User user = new User("user", passwordEncoder.encode("user"), "USER");
             user.getAuthorities().add(new Authority(user.getRole()));

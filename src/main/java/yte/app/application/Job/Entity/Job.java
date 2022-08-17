@@ -21,8 +21,6 @@ public class Job extends BaseEntity {
     private String URL;
     private Long period;
     private Long timeout;
-    private Long healthy = 0L;
-    private Long unhealthy = 0L;
     public Job(String jobName, String URL, Long period, Long timeout) {
         this.jobName = jobName;
         this.URL = URL;
@@ -30,13 +28,11 @@ public class Job extends BaseEntity {
         this.timeout = timeout;
     }
 
-   @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "user_id")
-   private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-
-
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.EAGER )
     private List<JobStatus> jobStatus = new ArrayList<>();
 
     public void update(Job updatedStudent) {
@@ -48,8 +44,5 @@ public class Job extends BaseEntity {
     public void setUser(User user) {
         this.user = user;
     }
-
-
-
 
 }

@@ -15,7 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class JobStatus extends BaseEntity {
 
-    private boolean reachable;
+    private Long reachable = 0L;
+    private Long unreachable = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
@@ -24,6 +25,5 @@ public class JobStatus extends BaseEntity {
     public void setJob(Job job) {
         this.job = job;
     }
-
 
 }

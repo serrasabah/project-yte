@@ -15,18 +15,10 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
-
     private final LoginService loginService;
-
-
     @PostMapping("/login")
     public MessageResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return loginService.login(loginRequest);
 
     }
-
-
-
-
-
 }

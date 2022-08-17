@@ -6,10 +6,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import yte.app.application.authentication.service.CustomUserDetailsService;
-
 @Configuration
 public class AuthenticationProviderConfiguration {
-
     @Bean
     public AuthenticationProvider authenticationProvider(
             PasswordEncoder passwordEncoder,

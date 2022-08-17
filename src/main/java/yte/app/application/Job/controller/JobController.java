@@ -1,21 +1,19 @@
 package yte.app.application.Job.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import yte.app.application.Job.Entity.Job;
+import yte.app.application.Job.pojo.JobStatusCount;
 import yte.app.application.Job.controller.request.AddJobRequest;
 import yte.app.application.Job.controller.request.UpdateJobRequest;
 import yte.app.application.Job.controller.response.JobQueryModel;
-import yte.app.application.Job.repository.JobStatusRepository;
 import yte.app.application.Job.service.JobService;
 import yte.app.application.common.response.MessageResponse;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/jobs")
@@ -25,23 +23,15 @@ public class JobController {
 
     private final JobService jobService;
 
-
     @PostMapping
     public MessageResponse addJob(@Valid @RequestBody AddJobRequest addJobRequest) {
-
-     //   String name = SecurityContextHolder.getContext().getAuthentication().getName();
         return jobService.addJob(addJobRequest.toDomainEntity());
     }
 
 
-    @GetMapping("/minute/{id}")
-    public JobQueryModel getByIdRepresentMınutes(@NotNull @PathVariable Long id) {
-        return new JobQueryModel(jobService.getByIdRepresentMınutes(id));
-    }
-
-    @GetMapping("/all/{id}")
-    public JobQueryModel getByIdAll(@NotNull @PathVariable Long id) {
-        return new JobQueryModel(jobService.getByIdAll(id));
+    @GetMapping("/{id}")
+    public Map<String, JobStatusCount> getByIdResult(@NotNull @PathVariable Long id) {
+        return jobService.getByIdResult(id);
     }
 
     @GetMapping("/name")

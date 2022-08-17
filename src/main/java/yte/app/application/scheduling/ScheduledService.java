@@ -1,18 +1,17 @@
 package yte.app.application.scheduling;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yte.app.application.Job.Entity.Job;
 import yte.app.application.Job.Entity.JobStatus;
+import yte.app.application.Job.repository.JobRepository;
 import yte.app.application.Job.service.JobService;
 
 import java.net.InetAddress;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 @Service
@@ -20,8 +19,7 @@ import java.util.concurrent.*;
 public class ScheduledService {
 
     private final JobService jobService;
-    private final SessionFactory sessionFactory;
-
+    private final JobRepository jobRepository;
     @Bean
     public ScheduledExecutorService threadPool() {
         return Executors.newScheduledThreadPool(4);
@@ -32,7 +30,7 @@ public class ScheduledService {
     public void startScanning() {
         var jobs = jobService.getAllJob();
         for(Job job: jobs) {
-            String threadName = "yte-scanner--" + job.getJobName();
+            String threadName =  job.getJobName();
             if(isJobExists(threadName)) {
                 System.out.println(threadName + " is already exist.");
             } else {
@@ -56,27 +54,30 @@ public class ScheduledService {
         return () -> {
             try {
                 Thread.currentThread().setName(threadName);
+                Optional<Job>  storedJob = jobRepository.findById(job.getId());
 
-                Session session = sessionFactory.openSession();
-                Transaction transaction = session.beginTransaction();
+                boolean result = false;
 
-                Job storedJob = session.get(Job.class, job.getId());
-
-                boolean result = InetAddress.getByName(job.getURL()).isReachable(job.getTimeout().intValue());
-
-                if(!(storedJob == null)){
+                try {
+                     result = InetAddress.getByName(job.getURL()).isReachable(job.getTimeout().intValue());
+                }catch (Exception e){
+                    System.out.println("verilen url değerine ulaşılamamaktadır.");
+                }
+                if(storedJob.isPresent()){
                     JobStatus jobStatus = new JobStatus();
+                    if(result==true){
+                        jobStatus.setReachable(1L);
+                    }
+                    else{
+                        jobStatus.setUnreachable(1L);
+                    }
+                    jobStatus.setJob(storedJob.get());
+                    storedJob.get().getJobStatus().add(jobStatus);
 
-                    jobStatus.setReachable(result);
-                    jobStatus.setJob(storedJob);
-                    storedJob.getJobStatus().add(jobStatus);
-                    session.save(storedJob);
+                    jobRepository.save(storedJob.get());
+                    System.out.println(Thread.currentThread().getName() + ":    " + job.getURL() + " isReachable? " + result);
                 }
 
-                transaction.commit();
-                session.close();
-
-                System.out.println(Thread.currentThread().getName() + ":    " + job.getURL() + " isReachable? " + result);
             } catch (Exception e) {
                 e.printStackTrace();
             }

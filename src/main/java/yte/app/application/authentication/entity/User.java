@@ -5,13 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 import yte.app.application.Job.Entity.Job;
-
 import yte.app.application.common.entity.BaseEntity;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity(name = "users")
 @Getter
 @Setter
@@ -22,24 +19,19 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
     private String role;
 
-
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_authorities",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id")
-
     )
     private List<Authority> authorities = new ArrayList<>();
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Job> jobs = new ArrayList<>();
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
-
     public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
@@ -50,8 +42,6 @@ public class User extends BaseEntity implements UserDetails {
         this.username = username;
         this.password = password;
     }
-
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -81,10 +71,4 @@ public class User extends BaseEntity implements UserDetails {
         this.jobs.add(job);
         job.setUser(this);
     }
-
-    /*
-    public static void main(String[] args) {
-        InetAddress.getByName("").isReachable(2000)
-    }
-*/
 }

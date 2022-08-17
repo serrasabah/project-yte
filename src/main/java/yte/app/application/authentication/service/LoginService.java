@@ -1,4 +1,5 @@
 package yte.app.application.authentication.service;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,21 +10,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import yte.app.application.authentication.controller.request.LoginRequest;
-import yte.app.application.authentication.entity.User;
 import yte.app.application.authentication.repository.UserRepository;
 import yte.app.application.common.response.MessageResponse;
 import yte.app.application.common.response.ResponseType;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class LoginService {
-
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
     public MessageResponse login(LoginRequest loginRequest) {
         var preAuthentication = new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
